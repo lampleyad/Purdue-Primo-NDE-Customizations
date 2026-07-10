@@ -18,7 +18,7 @@ interface NdeOnlineAvailability {
 }
 
 const AVAILABILITY_TEXT_KEY = 'HathiTrust.availabilityText';
-const DEFAULT_AVAILABILITY_TEXT = 'Full text from HathiTrust';
+const DEFAULT_AVAILABILITY_TEXT = 'Full Text May be Available at HathiTrust';
 
 @Component({
   standalone: true,
