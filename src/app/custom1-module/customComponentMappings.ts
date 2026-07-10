@@ -8,5 +8,10 @@ export const selectorComponentMap = new Map<string, any>([
   // The richer IllLoansOverviewComponent (inline request/article data) is
   // built but not wired here yet — it needs the PHP proxy in
   // src/app/ill/server/ deployed first.
+  // Confirmed working (2026-07-10), but renders after all overview cards,
+  // at the bottom of the page. nde-account-overview-before and
+  // nde-account-overview-top were both tested and confirmed absent, so
+  // there's currently no way to place this higher on the page via the
+  // documented slot mechanism.
   ['nde-account-overview-after', IllQuickLinksComponent],
 ]);

@@ -37,7 +37,7 @@ button[data-qa="natural-language-search-button"] mat-icon svg path {
 
 
 /* Header banner black for Purdue branding */
-.container[_ngcontent-ng-c2822152213] .top-bar[_ngcontent-ng-c2822152213] {
+.top-bar {
   background-color: #000000 !important;
 }
 
