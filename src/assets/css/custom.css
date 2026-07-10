@@ -1,0 +1,110 @@
+.user-area .user-area-logged-in span {
+unicode-bidi: bidi-override;
+direction: rtl;
+display: inline-block !important;
+line-height: 24px;
+}
+
+/* ============================================================
+   Pill-shaped buttons for AI-Enhanced Natural Language Search
+   and Advanced Search on the NDE landing page
+   ============================================================ */
+
+.advanced-search-btn-home-page,
+button[data-qa="natural-language-search-button"],
+button[data-qa="advanced-search-button"] {
+  border: 1.5px solid var(--sys-outline) !important;
+  border-radius: 999px !important;
+  padding: 6px 18px !important;
+  margin-left: 8px !important;
+  min-height: 40px !important;
+  line-height: 1.4 !important;
+  background-color: #ffffff !important;
+  color: #000000 !important;
+}
+
+/* Make sure the inner label span inherits the button's text color */
+.advanced-search-btn-home-page .mdc-button__label,
+.advanced-search-btn-home-page .mdc-button__label span {
+  color: inherit !important;
+}
+
+/* Force the AI-search icon paths to black so they show against white */
+.advanced-search-btn-home-page mat-icon svg path,
+button[data-qa="natural-language-search-button"] mat-icon svg path {
+  fill: #000000 !important;
+}
+
+
+/* Header banner black for Purdue branding */
+.container[_ngcontent-ng-c2822152213] .top-bar[_ngcontent-ng-c2822152213] {
+  background-color: #000000 !important;
+}
+
+/* Header menu links white for Purdue branding */
+ul.main-menu-list li a.mat-mdc-button .mdc-button__label {
+  color: #fff;
+}
+
+/* Header More button also white */
+.main-menu-list .show-more-btn .mdc-button__label {
+  color: #fff;
+}
+
+/* Header menu AI icon white */
+.icon-primary-fill.mat-icon svg path {
+  stroke: none;
+  fill: #ffffff !important;
+}
+
+/* Header menu dropdown icon needs to be white, too */
+.main-menu-list .show-more-btn mat-icon {
+  color: #fff;
+}
+
+.main-menu-list .show-more-btn mat-icon svg {
+  fill: #fff;
+}
+
+/* Search bar background overlay for better contrast with white header */
+.custom-search-bar-container .background-overlay {
+  background-color: #000 !important;   /* pure black */
+  opacity: 0.65 !important;             /* adjust as needed */
+}
+
+/* Record title styling for better visibility and branding */
+.record-title,
+.record-title nde-highlight span {
+  font-size: 1.20rem;
+  font-weight: 700;
+  color: #8e6f3e;  /* Boiler Gold - aged */
+  text-decoration: none;
+}
+
+.record-title:hover,
+.record-title:hover nde-highlight span {
+  text-decoration: underline;
+}
+
+
+/* CSS Needs for PrimoNDE 
+1. DOI/PMID lookup from LibKey?
+2. Increase Get it from PurdueBorrow font size?
+3. Browzine styles?
+4. Altmetrics?
+5. Hiding images of Prophet Muhammad - entity person, person page, autocomplete, and people associated with pane
+6. Styling for Browse and Journal searching pages?
+7. Custom no results page
+8. Hide "Search inside" for print journals
+9. Hide Fort Wayne ILL Link at other campuses
+10. Allow resource recommender banner link out box to expand with its text content
+11. Show main many links on services page
+12. Purchase form adjustments - hide the following: citation type, material type, electronic (preferred), physical
+13. Report a problem
+14. Resource recommender banner
+15. Get it Location item details table
+16. Feedback widget customizations
+17. Purdue Collections recommended changes 
+18. Color adjustments for accessibility/branding - permalink, share icon color, pin icon color,
+19. Coverage statement on separate lines
+*/
