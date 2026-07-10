@@ -34,7 +34,7 @@ one identifier is enabled.
 
 ## Customizing the availability text
 
-The default availability link text is: "Full text from HathiTrust"
+The default availability link text is: "Full Text May be Available at HathiTrust"
 
 To customize it, add a row to the Primo VE **NDE Custom Defined Labels** code
 table with the code `HathiTrust.availabilityText` and a description of your
