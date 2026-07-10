@@ -6,10 +6,23 @@ import {Router} from "@angular/router";
 import {selectorComponentMap} from "./custom1-module/customComponentMappings";
 import {TranslateModule} from "@ngx-translate/core";
 import { CommonModule } from '@angular/common';
+import { provideHttpClient } from '@angular/common/http';
 import { AutoAssetSrcDirective } from './services/auto-asset-src.directive';
 import {SHELL_ROUTER} from "./injection-tokens";
 
-
+// Configuration for the HathiTrust availability component (src/app/hathi-trust).
+// In add-on mode Alma would supply MODULE_PARAMETERS; as a customization
+// package we provide it here. See src/app/hathi-trust/README.md for options.
+const hathiTrustParameters = {
+  disableWhenAvailableOnline: true,
+  disableForJournals: false,
+  ignoreCopyright: false,
+  matchOn: {
+    oclc: true,
+    isbn: false,
+    issn: false
+  }
+};
 
 export const AppModule = ({providers, shellRouter}: {providers:any, shellRouter: Router}) => {
    @NgModule({
@@ -23,7 +36,12 @@ export const AppModule = ({providers, shellRouter}: {providers:any, shellRouter:
       CommonModule,
       TranslateModule.forRoot({})
     ],
-    providers: [...providers, {provide: SHELL_ROUTER, useValue: shellRouter}],
+    providers: [
+      ...providers,
+      {provide: SHELL_ROUTER, useValue: shellRouter},
+      provideHttpClient(),
+      {provide: 'MODULE_PARAMETERS', useValue: hathiTrustParameters}
+    ],
     bootstrap: []
   })
   class AppModule implements DoBootstrap{
