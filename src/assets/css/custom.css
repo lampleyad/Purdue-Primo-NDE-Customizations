@@ -86,6 +86,27 @@ ul.main-menu-list li a.mat-mdc-button .mdc-button__label {
   text-decoration: underline;
 }
 
+/* TESTING FOR NDE - Hiding visual depictions of Muhammad out of respect for Islamic tradition */
+
+/* HIDE THE ENTITY PERSON IMAGE */
+md-card:has([src*="Siyer-i_Nebi_158b.jpg" i], [src*="Edinburgh_codex" i]) md-card-avatar {
+  display: none !important;
+}
+
+/* Hides Image from Person Page */
+.image-person-cont:has(img[src*="Siyer-i_Nebi_158b.jpg" i], [src*="Edinburgh_codex" i]) {
+  display: none !important;
+}
+
+/* Hides the Image From Autocomplete */
+.person-autocomplete:has(img[src*="Siyer-i_Nebi_158b.jpg" i], [src*="Edinburgh_codex" i]) img {
+  display: none !important;
+}
+
+/* Hides the Image From the People Associated With Pane */
+prm-featured-result-item md-card:has(img[src*="Siyer-i_Nebi_158b.jpg" i], [src*="Edinburgh_codex" i]) .card-image {
+  display: none !important;
+}
 
 /* CSS Needs for PrimoNDE 
 1. DOI/PMID lookup from LibKey?
