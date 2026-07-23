@@ -68,7 +68,52 @@
     f.parentNode.insertBefore(j, f);
   })(window, document, 'script', 'dataLayer', 'GTM-WZKRSVR');
 
+  // --------------------------------------------------------------------------
+  // 4. Auto-expand Get It library/location sections
+  //    Expands each collapsed library section in the Get It area once, so
+  //    item tables (barcodes + item-level request links) show without a
+  //    click. Also lets the ASC rule in custom.css hide the bib-level Aeon
+  //    request card as soon as an item-level Aeon link renders. Sections a
+  //    user collapses again are left alone (the marker prevents re-expand).
+  // --------------------------------------------------------------------------
+  (function initAutoExpandLocations() {
+    var MARKER = 'data-purdue-auto-expanded';
+
+    function autoExpand() {
+      var buttons = document.querySelectorAll(
+        'button[aria-expanded="false"]:not([' + MARKER + '])'
+      );
+      buttons.forEach(function (btn) {
+        if (btn.querySelector('.getit-library-title')) {
+          btn.setAttribute(MARKER, 'true');
+          btn.click();
+        }
+      });
+    }
+
+    var scheduled = false;
+    var observer = new MutationObserver(function () {
+      if (scheduled) return;
+      scheduled = true;
+      window.requestAnimationFrame(function () {
+        scheduled = false;
+        autoExpand();
+      });
+    });
+
+    function start() {
+      autoExpand();
+      observer.observe(document.body, { childList: true, subtree: true });
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', start);
+    } else {
+      start();
+    }
+  })();
+
   // Optional: tiny console marker to confirm custom.js loaded
-  console.log('NDE custom.js loaded (GA4 + LibAnswers + GTM).');
+  console.log('NDE custom.js loaded (GA4 + LibAnswers + GTM + auto-expand).');
 
 })();

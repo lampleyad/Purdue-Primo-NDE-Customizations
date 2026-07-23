@@ -129,3 +129,16 @@ prm-featured-result-item md-card:has(img[src*="Siyer-i_Nebi_158b.jpg" i], [src*=
 18. Color adjustments for accessibility/branding - permalink, share icon color, pin icon color,
 19. Coverage statement on separate lines
 */
+/* ============================================================
+   Archives & Special Collections requesting:
+   hide the bib/title-level Aeon request card whenever an
+   item-level Aeon request link is present (barcoded items).
+   Unbarcoded ASC holdings have no item-level link, so the
+   bib-level card remains visible for them. Item tables are
+   auto-expanded by custom.js so the item-level link renders
+   without a user click.
+   ============================================================ */
+body:has(nde-location-items-container a[href*="aeon.atlas-sys.com"])
+  nde-request-card:has(mat-card-actions a[href*="aeon.atlas-sys.com"]) {
+  display: none !important;
+}
