@@ -277,3 +277,58 @@ nde-resource-recommender-card p {
   line-clamp: 3 !important;
   overflow: hidden !important;
 }
+
+/* ============================================================
+   GET IT / REQUEST LINK-OUT CARDS (e.g. "Request via Distance
+   Delivery" on record pages)
+   Previously only a small "Open link in new window" text+icon on
+   the right edge was actually clickable, even though the whole
+   gray card (icon + title + description) visually looked like one
+   clickable unit - the large left-hand icon was never inside the
+   <a> and was never clickable. Per WCAG 1.4.1 (don't rely on color
+   alone) and general link discoverability, this makes the entire
+   card the click target and drops the redundant "Open link in new
+   window" label/icon, since the <a>'s aria-label already announces
+   "...Opens in a new tab" to screen readers regardless of visible
+   text. The stretched-link technique below (::after covering the
+   whole card) requires resetting the <a> to position: static first,
+   since Angular Material's own .mdc-button rule already sets
+   position: relative on it, which would otherwise become the
+   containing block instead of the card.
+   ============================================================ */
+
+.link-requests a.basic-button {
+  position: static !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  padding: 0 !important;
+}
+
+.link-requests a.basic-button .mdc-button__label,
+.link-requests a.basic-button mat-icon {
+  display: none !important;
+}
+
+.link-requests a.basic-button::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 12px;
+}
+
+.request-card:has(.link-requests a.basic-button:hover) {
+  background-color: #efe6da !important;
+  cursor: pointer;
+}
+
+.request-card:has(.link-requests a.basic-button:focus-visible) {
+  outline: 2px solid #8e6f3e !important;
+  outline-offset: 2px !important;
+}
+
+/* Match the record-title branding treatment (Boiler Gold, bold) so the
+   card title reads as a consistent "branded heading" pattern site-wide */
+.request-card .request-title {
+  color: #8e6f3e !important;
+  font-weight: 700 !important;
+}
