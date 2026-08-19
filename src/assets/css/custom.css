@@ -122,7 +122,6 @@ prm-featured-result-item md-card:has(img[src*="Siyer-i_Nebi_158b.jpg" i], [src*=
 11. Show main many links on services page
 12. Purchase form adjustments - hide the following: citation type, material type, electronic (preferred), physical
 13. Report a problem
-14. Resource recommender banner
 15. Get it Location item details table
 16. Feedback widget customizations
 17. Purdue Collections recommended changes 
@@ -141,4 +140,140 @@ prm-featured-result-item md-card:has(img[src*="Siyer-i_Nebi_158b.jpg" i], [src*=
 body:has(nde-location-items-container a[href*="aeon.atlas-sys.com"])
   nde-request-card:has(mat-card-actions a[href*="aeon.atlas-sys.com"]) {
   display: none !important;
+}
+
+/* ============================================================
+   RESOURCE RECOMMENDER BANNER
+   Flat, clean restyle to match Purdue branding: removes NDE's
+   default gradient background and oversized title text. Keeps
+   NDE's cleaner look rather than porting over VE's gold accent
+   bar / card treatment.
+
+   NOTE: NDE renders an inner ".resource-recommender-banner-overlay"
+   scrim (a semi-transparent dark layer meant to sit on top of a
+   background image) inside the outer card. With no background
+   image configured, that scrim itself reads as a dark gray box
+   and tanks text/icon contrast - it has to be neutralized
+   separately from the outer card background.
+   ============================================================ */
+
+/* Remove the default gradient background; use a flat light card.
+   NDE hardcodes this card at a fixed height (13rem, sized for a
+   background image) - override to auto so it shrinks to fit the text. */
+.resource-recommender-banner-container.banner-default-background {
+  background: #f4f4f4 !important;
+  background-image: none !important;
+  border-radius: 5px;
+  height: auto !important;
+  min-height: 0 !important;
+}
+
+/* Kill the dark image-overlay scrim so the light card shows through,
+   and tighten padding/spacing to shrink the banner's footprint */
+.resource-recommender-banner-container .resource-recommender-banner-overlay {
+  position: static !important;
+  background: transparent !important;
+  padding: 12px 16px !important;
+  height: auto !important;
+  width: 100% !important;
+}
+
+.resource-recommender-banner-container .resource-recommender-banner-overlay .gap-05 {
+  gap: 4px !important;
+}
+
+/* Hide the small display-name label above the title (redundant with the title) */
+.resource-recommender-banner-container .banner-name {
+  display: none !important;
+}
+
+/* Main banner title */
+.resource-recommender-banner-container .banner-title {
+  color: #000000 !important;
+  font-size: 18px !important;
+  font-weight: 500 !important;
+  line-height: normal !important;
+}
+
+/* Banner description text */
+.resource-recommender-banner-container .banner-description {
+  color: #333333 !important;
+  font-size: 13px !important;
+}
+
+/* "More Information" call-to-action button - solid black pill to match
+   Purdue branding instead of NDE's default outlined button */
+.resource-recommender-banner-container .banner-button {
+  background-color: #000000 !important;
+  border-radius: 999px !important;
+  margin-top: 4px !important;
+}
+
+.resource-recommender-banner-container .banner-button .mdc-button__label {
+  color: #ffffff !important;
+}
+
+/* Close button - light circle with a dark icon instead of the dark
+   image-overlay circle, so it reads clearly against the light card */
+.resource-recommender-banner-container .banner-close-button {
+  background-color: transparent !important;
+}
+
+.resource-recommender-banner-container .banner-close-button:hover {
+  background-color: rgba(0, 0, 0, 0.08) !important;
+}
+
+.resource-recommender-banner-container .banner-close-button .mat-icon svg path {
+  fill: #000000 !important;
+}
+
+/* ============================================================
+   SUGGESTED DATABASES / RESOURCES CARDS (search results page)
+   This is a different component than the banner above
+   (nde-search-results-recommendations / nde-resource-recommender-card).
+   NDE fixes each card's height via an inline JS-driven value
+   (--resource-recommender-viewport-height custom property, plus an
+   inline height on each .carousel-card wrapper) rather than sizing
+   to content, so it has to be overridden directly rather than by
+   trimming padding/fonts alone.
+   ============================================================ */
+
+cdk-virtual-scroll-viewport.resource-recommender-dynamic-height {
+  --resource-recommender-viewport-height: 190px !important;
+}
+
+.carousel-card.resource-card-full-width {
+  height: 190px !important;
+}
+
+mat-card.carousel-resource-recommender-card {
+  padding: 12px !important;
+}
+
+.carousel-resource-recommender-card .resource-header {
+  font-size: 12px !important;
+  padding-bottom: 4px !important;
+}
+
+.carousel-resource-recommender-card .resource-name {
+  font-size: 15px !important;
+}
+
+/* Logo/thumbnail was stretched to fill the full card height via flexbox
+   (object-fit: cover), which both inflated the card size and cropped
+   non-square logos oddly. Fix it to a small square thumbnail instead. */
+.resource-img {
+  flex-basis: 90px !important;
+  width: 90px !important;
+  height: 90px !important;
+  align-self: flex-start !important;
+  object-fit: contain !important;
+  border: 1px solid #e0e0e0 !important;
+}
+
+nde-resource-recommender-card p {
+  font-size: 13px !important;
+  -webkit-line-clamp: 3 !important;
+  line-clamp: 3 !important;
+  overflow: hidden !important;
 }
