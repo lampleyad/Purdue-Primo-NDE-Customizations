@@ -113,7 +113,60 @@
     }
   })();
 
+  // --------------------------------------------------------------------------
+  // 5. Reorder View Online sections
+  //    NDE renders "Additional services" (ILL/research assistance) above
+  //    "Full text availability" (e.g. HathiTrust) when a record has both.
+  //    Show the direct full-text link first, additional services below it.
+  // --------------------------------------------------------------------------
+  (function initReorderViewItSections() {
+    var MARKER = 'data-purdue-view-it-reordered';
+
+    function reorder() {
+      var parents = document.querySelectorAll(
+        'nde-view-it:not([' + MARKER + '])'
+      );
+      parents.forEach(function (parent) {
+        var sections = parent.querySelectorAll('nde-view-it-section');
+        var fullText = null;
+        var additionalServices = null;
+        sections.forEach(function (section) {
+          var titleEl = section.querySelector('.view-it-title');
+          if (!titleEl) return;
+          var text = titleEl.textContent.trim();
+          if (text === 'Full text availability') fullText = section;
+          if (text === 'Additional services') additionalServices = section;
+        });
+        if (fullText && additionalServices) {
+          parent.setAttribute(MARKER, 'true');
+          parent.insertBefore(fullText, additionalServices);
+        }
+      });
+    }
+
+    var scheduled = false;
+    var observer = new MutationObserver(function () {
+      if (scheduled) return;
+      scheduled = true;
+      window.requestAnimationFrame(function () {
+        scheduled = false;
+        reorder();
+      });
+    });
+
+    function start() {
+      reorder();
+      observer.observe(document.body, { childList: true, subtree: true });
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', start);
+    } else {
+      start();
+    }
+  })();
+
   // Optional: tiny console marker to confirm custom.js loaded
-  console.log('NDE custom.js loaded (GA4 + LibAnswers + GTM + auto-expand).');
+  console.log('NDE custom.js loaded (GA4 + LibAnswers + GTM + auto-expand + view-it reorder).');
 
 })();
