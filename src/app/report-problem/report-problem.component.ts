@@ -22,27 +22,22 @@ export class ReportProblemComponent implements OnInit {
   private searchResultFacade = inject(SearchResultFacade);
   private el = inject(ElementRef);
 
-  reportUrl = `${LIBANSWERS_FORM_URL}?queue_id=${LIBANSWERS_QUEUE_ID}`;
-
   ngOnInit(): void {
-    this.searchResultFacade.currentFullDisplay$.subscribe((record) => {
-      const title = record?.pnx?.display?.['title']?.[0] ?? '';
-      const author = record?.pnx?.display?.['creator']?.[0] ?? '';
-      const docid = record?.pnx?.control?.recordid?.[0] ?? '';
-
-      const detail = [title, author && `by ${author}`, docid && `(Record ID: ${docid})`]
-        .filter(Boolean)
-        .join(' ');
-
-      const params = new URLSearchParams({
-        queue_id: LIBANSWERS_QUEUE_ID,
-        custom3: detail,
-        pdetails: window.location.href,
-      });
-      this.reportUrl = `${LIBANSWERS_FORM_URL}?${params.toString()}`;
-
+    this.searchResultFacade.currentFullDisplay$.subscribe(() => {
       this.hideDuplicateHost();
     });
+  }
+
+  // A getter (not a value set once in ngOnInit) so the URL is always read
+  // fresh from window.location.href at the moment Angular renders/re-renders
+  // the link, rather than a snapshot that can go stale if NDE updates the
+  // address bar (query params, etc.) after this component first mounts.
+  get reportUrl(): string {
+    const params = new URLSearchParams({
+      queue_id: LIBANSWERS_QUEUE_ID,
+      pdetails: window.location.href,
+    });
+    return `${LIBANSWERS_FORM_URL}?${params.toString()}`;
   }
 
   private hideDuplicateHost(): void {

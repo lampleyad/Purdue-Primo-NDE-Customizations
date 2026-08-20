@@ -201,6 +201,18 @@ body:has(nde-location-items-container a[href*="aeon.atlas-sys.com"])
   font-size: 13px !important;
 }
 
+/* NDE's ndetooltipifoverflow directive truncates the title/description to a
+   single line with an ellipsis and relies on a hover/focus tooltip to show
+   the rest - not readable for touch users, and easy to miss entirely. Let
+   the text wrap instead; the card already resizes to fit (height: auto,
+   set above) so a longer message just makes the card taller. */
+.resource-recommender-banner-container .banner-title,
+.resource-recommender-banner-container .banner-description {
+  white-space: normal !important;
+  overflow: visible !important;
+  text-overflow: clip !important;
+}
+
 /* "More Information" call-to-action button - solid black pill to match
    Purdue branding instead of NDE's default outlined button */
 .resource-recommender-banner-container .banner-button {
