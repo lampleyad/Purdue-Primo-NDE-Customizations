@@ -86,6 +86,92 @@ ul.main-menu-list li a.mat-mdc-button .mdc-button__label {
   text-decoration: underline;
 }
 
+/* ============================================================
+   COLLECTIONS PAGE - COLLECTION CARD TITLES
+   Recolors the gray collection-card title links (nde/collectionDiscovery)
+   to Boiler Gold, matching the record-title branding treatment above.
+   These are standalone card titles, not links inline within a run of
+   body text, so WCAG 1.4.1 (Use of Color) doesn't require a permanent
+   underline here the way it would for an in-paragraph link - same
+   underline-only-on-hover/focus pattern as record-title, giving a
+   non-color affordance without permanently underlining every card.
+
+   Contrast fix (2026-08-25): #8e6f3e at 16px/weight 500 (not bold, so
+   the WCAG 1.4.3 "large-scale text" 3:1 exception doesn't apply here
+   the way it did for the request-card titles yesterday - this needs
+   the full 4.5:1 normal-text ratio) measured 4.43:1 against the card's
+   native off-white background (#fcf8f8) - just under the 4.5:1
+   requirement. Whitening the card background to a true #ffffff (a
+   practically invisible visual change from #fcf8f8) is enough on its
+   own to reach 4.67:1 and pass, with no change to the text itself. No
+   separate hover-state background exists on this card to re-check
+   (confirmed via getComputedStyle while actually hovered - unlike the
+   request-card's cream hover background yesterday). */
+.collection-title {
+  color: #8e6f3e !important;
+  text-decoration: none !important;
+}
+
+.collection-title:hover,
+.collection-title:focus-visible {
+  text-decoration: underline !important;
+}
+
+.collection-grid-card {
+  background-color: #ffffff !important;
+}
+
+/* ============================================================
+   COLLECTIONS PAGE - COLLECTION HEADER BANNER
+   Each individual collection page (nde/collectionDiscovery?
+   collectionId=...) renders a per-collection photo (a real <img
+   class="background-image">, not a CSS background) behind the
+   white "COLLECTIONS /" breadcrumb + title text. Contrast against
+   a photo is unpredictable and varies per collection - some images
+   are light enough in the text area to fail WCAG for the white
+   text, and every current/future collection's image would need
+   checking individually to guarantee compliance. Replaces the
+   photo with a flat, pre-tested-compliant background instead:
+   white text on #555960 measures 7.04:1 (passes AA and AAA for
+   normal text). #555960 (not black) is a deliberate choice to keep
+   this banner visually distinct from the black site header
+   directly above it.
+   ============================================================ */
+
+.collection-discovery-header .background-image {
+  display: none !important;
+}
+
+.collection-discovery-header {
+  background-color: #555960 !important;
+  /* NDE sizes this banner (min-height/height: 226px) to comfortably fit
+     a photo; with the photo removed above, that leaves ~60px of empty
+     space above and below the text block on both sides. Let it size to
+     its content instead, with a modest fixed padding. */
+  min-height: auto !important;
+  height: auto !important;
+  padding: 24px 0 !important;
+}
+
+/* Inline links inside the header description (e.g. "Pursuing Racial
+   Justice Together" in "...talks in the Pursuing Racial Justice
+   Together conference...") default to the exact same white as the
+   surrounding non-link text, with no underline until hover - WCAG
+   1.4.1 (Use of Color) requires a non-color cue here since this link
+   sits inline within a run of body text, unlike the standalone
+   collection-title/card-title links elsewhere in this file. Purdue's
+   two brand colors approved for use on #555960 (white, #EBD99F) don't
+   help: #EBD99F is only 1.4:1 different from white (looks the same at
+   a glance - confirmed, not just eyeballed), and the site's aged gold
+   #8e6f3e measures just 1.51:1 against this background (nearly
+   invisible). Simplest fix per WCAG technique G182: keep the link
+   white (already 7.04:1 against the background) and make its
+   underline permanent instead of hover-only, rather than hunting for
+   a color that doesn't exist here. */
+.header-description a {
+  text-decoration: underline !important;
+}
+
 /* TESTING FOR NDE - Hiding visual depictions of Muhammad out of respect for Islamic tradition */
 
 /* HIDE THE ENTITY PERSON IMAGE */
@@ -338,9 +424,309 @@ nde-resource-recommender-card p {
   outline-offset: 2px !important;
 }
 
-/* Match the record-title branding treatment (Boiler Gold, bold) so the
-   card title reads as a consistent "branded heading" pattern site-wide */
+/* Accessibility fix (2026-08-24, revised): #8e6f3e (Purdue's official
+   brand gold) failed WCAG 1.4.3 contrast at NDE's default 16px against
+   both this card's resting background (#f7f3f2, 4.24:1) and its hover
+   background (#efe6da, 3.78:1) - both need 4.5:1 at normal text size.
+   Enlarging the title to qualify for the relaxed "large-scale text" 3:1
+   threshold was tried first, but user felt it threw off the rest of the
+   card's proportions. Settled on simply reverting to NDE's own default
+   font/size/color (guaranteed to already meet Ex Libris's own contrast
+   testing) and keeping only bold for emphasis - trades the gold branding
+   accent on this card for a visual difference that doesn't require a
+   contrast workaround at all. */
 .request-card .request-title {
-  color: #8e6f3e !important;
   font-weight: 700 !important;
+}
+
+/* ============================================================
+   ALL AVAILABILITY-ROW BUTTONS
+   Applies one consistent gold outline treatment (white background,
+   #8e6f3e border/text/icon) to every button inside the
+   availability row (.record-availability-and-exhibition-links),
+   regardless of which underlying component renders it. This row
+   mixes NDE's own native quicklink buttons ("Online access
+   available", "Download PDF", "Request this Item", "Read online")
+   with Third-Iron/BrowZine's separately injected widgets
+   ("Download PDF"/"Download PDF (via Unpaywall)"/"Read Article" -
+   all the same .ti-dropdown-button, and "View Issue Contents" -
+   #ti-custom-button) - which button(s) actually appear depends on
+   the record (LibKey match vs Unpaywall-resolved PDF vs a plain
+   NDE quicklink). Rather than chase each source's specific class
+   individually, style the row as a whole so any button that shows
+   up here - present or future - looks the same.
+
+   Icon-fill note: NDE's native buttons wrap their SVG in
+   <mat-icon class="icon-primary-fill ...">, and an existing rule
+   above (written for the black header's AI icon) forces
+   ".icon-primary-fill.mat-icon svg path" to white with !important.
+   That rule has higher specificity (2 classes) than a naive
+   "button svg path" rule (1 class) would, so it would silently
+   keep winning here and leave these icons invisible-white against
+   the white button background. The first selector below matches
+   that same nesting with one extra class to beat it; the second
+   handles Third-Iron's own <custom-svg-icon>-wrapped SVGs, which
+   don't carry "icon-primary-fill" and don't have that conflict.
+   ============================================================ */
+
+/* :not(.available-at-button) excludes the "Physical Available at ..."
+   status pill - that one isn't an action button, it's NDE's built-in
+   availability indicator (default olive-green text via its own
+   ".availability-code" span, no border of its own). Duke's site
+   shows this in green too, but only because they left it at NDE's
+   default rather than styling it gold like the actual action
+   buttons - so it's excluded here rather than recolored. */
+.record-availability-and-exhibition-links button:not(.available-at-button) {
+  background-color: #ffffff !important;
+  border: 1.5px solid #8e6f3e !important;
+  color: #8e6f3e !important;
+}
+
+.record-availability-and-exhibition-links button:not(.available-at-button) .mdc-button__label,
+.record-availability-and-exhibition-links button:not(.available-at-button) .mdc-button__label span,
+.record-availability-and-exhibition-links button:not(.available-at-button) .quicklink-button-text {
+  color: #8e6f3e !important;
+}
+
+.record-availability-and-exhibition-links button:not(.available-at-button) .icon-primary-fill svg path,
+.record-availability-and-exhibition-links button:not(.available-at-button) svg path {
+  fill: #8e6f3e !important;
+}
+
+/* ============================================================
+   PHYSICAL AVAILABILITY STATUS PILL
+   The "Physical Available at ..." indicator is excluded from the
+   gold button styling above (it's a status readout, not an action
+   button). NDE already renders a green "available" dot next to it
+   (SVG circle, fill="#368704") when an item is genuinely available -
+   but ".available-at-button"/".availability-code" are the SAME
+   classes NDE reuses for every physical-availability status, not
+   just "available" (e.g. "Physical currently unavailable" renders
+   through this identical markup, just without that dot). Recoloring
+   those classes unconditionally green would have wrongly painted
+   "unavailable" messages green too.
+
+   Fix: only apply the green treatment when that specific "available"
+   dot is actually present as a sibling in the same
+   ".availability-status" wrapper - a positive match on "this record
+   really is available" rather than trying to guess/exclude every
+   other status string. If NDE ever renders an "unavailable" (or any
+   other) status, it simply won't have this icon and will fall
+   through to NDE's own default styling untouched.
+
+   Border/padding/radius live on the ".availability-status" WRAPPER
+   (not on ".available-at-button" itself) so the green dot - a sibling
+   of the button, not a descendant - visually sits inside the same
+   pill as the text, instead of floating outside it. Confirmed this
+   is exactly how Duke's site achieves the same look (inspected their
+   live DOM: their wrapper carries the border/radius/padding, their
+   button itself has none).
+
+   NDE also renders ".availability-code" at font-weight 300 (light)
+   by default, noticeably thinner than the 400 (regular) weight used
+   by nearby buttons like "Online access available" despite matching
+   font-size/family - confirmed via getComputedStyle, not just a
+   visual impression. Normalized to 400 here so every physical-
+   availability status (available, "Get It", or otherwise) reads at
+   the same weight as the rest of the row.
+   ============================================================ */
+
+.availability-code {
+  font-weight: 400 !important;
+}
+
+.availability-status:has(> mat-icon[data-mat-icon-name="Available-record-indicator"]) {
+  border: 1.5px solid #368704 !important;
+  border-radius: 999px !important;
+  padding: 4px 12px !important;
+  align-items: center !important;
+}
+
+.availability-status:has(> mat-icon[data-mat-icon-name="Available-record-indicator"]) .availability-code {
+  color: #368704 !important;
+}
+
+/* ============================================================
+   "GET IT" / "REQUEST THIS ITEM" STATUS PILLS
+   NDE falls back to a plain gray "Get It" or "Request this Item"
+   label (same ".available-at-button"/".availability-code" markup
+   as the green "available" pill) whenever physical availability
+   isn't a clean single "available" - e.g. mixed/multiple holdings
+   ("Get It", no icon) or a request-only/unavailable item ("Request
+   this Item", paired with a <mat-icon data-mat-icon-name=
+   "Unavailable-record-indicator"> sibling - the gray counterpart to
+   the green "Available-record-indicator" icon used for the available
+   pill above). User wants both left at NDE's existing dark gray text
+   color (not recolored), just given the same oval pill outline as
+   the green "available" pill for visual consistency.
+
+   "Get It" has no icon to key off, so it's matched via the button's
+   own aria-label ("Get It (...)") instead - keeps it scoped
+   specifically to that wording rather than accidentally catching a
+   differently-worded status through this same shared markup. Both
+   this and the icon-based match end up with identical styling, so
+   they're combined into one selector list rather than duplicated.
+
+   "Get It" (and to a lesser extent "Request this Item") is short
+   enough to expose Angular Material's default ".mdc-button"
+   min-width (64px, the Material Design spec's minimum touch-target
+   width) - overridden to auto so the button (and the pill wrapper
+   around it, which sizes to its content) shrink to fit the text
+   instead of leaving trailing empty space inside the pill.
+   ============================================================ */
+
+.availability-status:has(> button.available-at-button[aria-label^="Get It"]),
+.availability-status:has(> mat-icon[data-mat-icon-name="Unavailable-record-indicator"]) {
+  border: 1.5px solid #5e5e5e !important;
+  border-radius: 999px !important;
+  padding: 4px 12px !important;
+  align-items: center !important;
+}
+
+.availability-status:has(> button.available-at-button[aria-label^="Get It"]) .available-at-button,
+.availability-status:has(> mat-icon[data-mat-icon-name="Unavailable-record-indicator"]) .available-at-button {
+  min-width: auto !important;
+}
+
+/* ============================================================
+   GET IT FROM PURDUEBORROW - REQUEST OPTIONS ROW
+   Left-justifies the "REQUEST OPTIONS:" label + request button
+   row (NDE right-aligns it by default via the "flex-layout-end-
+   center" utility class - overridden on the specific container
+   here rather than that shared utility class, since other
+   unrelated elements likely reuse it) and applies the same gold-
+   outline treatment used for the availability-row action buttons
+   elsewhere in this file (white background, gold border/text)
+   instead of NDE's plain gray outline.
+
+   Contrast double-checked specifically for this smaller context
+   (14px, not bold, per contrast-check-workflow): #8e6f3e on white
+   still measures 4.67:1, clearing the 4.5:1 requirement - text
+   size only matters for whether the relaxed large-text 3:1
+   exception could apply instead, which isn't relevant here since
+   this button relies on the full ratio regardless of size, same
+   as the other gold-outline buttons already in this file.
+   ============================================================ */
+
+.location-items-requests-container {
+  justify-content: flex-start !important;
+}
+
+.location-items-requests-container button.rectangle-button {
+  background-color: #ffffff !important;
+  border: 1.5px solid #8e6f3e !important;
+  color: #8e6f3e !important;
+}
+
+.location-items-requests-container button.rectangle-button .getit-service-button {
+  color: #8e6f3e !important;
+}
+
+/* ============================================================
+   ITEM-LEVEL "REQUEST" LINK (LOCATIONS SECTION)
+   The per-item "Request" link (inside each barcode/description row
+   under Locations, shown when there are multiple copies/volumes -
+   e.g. "Book v. 1", "Book v. 2") rendered as plain gray text with no
+   background - easy to miss next to the barcode/description/loan-
+   period columns. Restyled to match ".request-button" (the dark
+   gray pill/white text button already used in the "Request Options
+   and Links to Other Services" section) exactly, for a consistent
+   "this is how a request action looks" pattern across the page.
+
+   This link has no distinguishing class of its own (just generic
+   Material button classes reused everywhere: "mdc-button mat-mdc-
+   button mat-primary mat-mdc-button-base"), so it's scoped via its
+   wrapping Angular component tag <nde-location-item-service-button>
+   instead, which is stable and specific to this exact link.
+
+   Contrast re-verified for this instance specifically (per
+   contrast-check-workflow): white text on #5e5e5e measures 6.48:1 -
+   same pairing ".request-button" already uses, just confirmed again
+   since this is a different component with its own markup.
+   ============================================================ */
+
+nde-location-item-service-button button {
+  background-color: #5e5e5e !important;
+  border-radius: 9999px !important;
+  color: #ffffff !important;
+  /* NDE's default mat-button height (40px) reads as oversized crammed
+     into this tight, single-line barcode/description/loan-period row -
+     shrink to a more proportionate chip size. */
+  height: 28px !important;
+  min-height: 28px !important;
+  line-height: 28px !important;
+  padding: 0 14px !important;
+}
+
+/* ============================================================
+   "REQUEST VIEWING AT ASC" LINK (LOCATIONS SECTION)
+   Same gray-pill treatment as the item-level "Request" link above,
+   applied to the Archives & Special Collections (Aeon) request link
+   that appears in its place for ASC-held items - also plain gray
+   text, easy to miss. This one is a plain <a> (not a <button>),
+   wrapped in the generic <nde-general-electronic-service-link>
+   component, which is likely reused for other kinds of external
+   service links elsewhere in NDE - not just this one. Rather than
+   styling every link that component renders, scoped tightly to the
+   Aeon URL specifically (the same "a[href*='aeon.atlas-sys.com']"
+   pattern already used elsewhere in this file to hide the redundant
+   bib-level Aeon request card), combined with the component tag for
+   extra precision.
+
+   Contrast: white on #5e5e5e measures 6.48:1, the same pairing
+   already used above and for ".request-button".
+   ============================================================ */
+
+nde-general-electronic-service-link a[href*="aeon.atlas-sys.com"] {
+  background-color: #5e5e5e !important;
+  border-radius: 9999px !important;
+  height: 28px !important;
+  min-height: 28px !important;
+  line-height: 28px !important;
+  padding: 0 14px !important;
+}
+
+nde-general-electronic-service-link a[href*="aeon.atlas-sys.com"] .location-service-link {
+  color: #ffffff !important;
+}
+
+nde-general-electronic-service-link a[href*="aeon.atlas-sys.com"] mat-icon svg path {
+  fill: #ffffff !important;
+}
+
+/* ============================================================
+   LOCATIONS SECTION - "AVAILABLE" LABEL POSITION
+   custom.js (initMoveLocationAvailableLabel) relocates the
+   ".getit-location-available" label from NDE's default position
+   (grouped with the "Locate" button on the right) to sit before
+   the location/call-number text on the left, matching PrimoVE's
+   layout. This just adds a trailing comma so it reads as one line
+   - "Available, HSSE - 3rd floor LC; PR6039.O32 H63 1997" - rather
+   than running the words together with no punctuation.
+   ============================================================ */
+
+.getit-location-available[data-purdue-available-moved]::after {
+  content: ",";
+}
+
+/* ============================================================
+   CITED BY / CITED IN INDICATORS
+   Recolors the "Cited By" / "Cited In" icons + labels to Purdue's
+   Boiler Gold, matching the branded-link treatment used for
+   record titles and request-card titles elsewhere in this file.
+   The icon SVGs ship with a hardcoded fill="#5E42D8" attribute
+   directly on the <path> (not a class), so it needs a direct
+   override rather than a theme variable.
+   ============================================================ */
+
+nde-record-citations-indicators .citation-indicator mat-icon svg path {
+  fill: #8e6f3e !important;
+}
+
+nde-record-citations-indicators .citation-indicator .mat-body-medium {
+  color: #8e6f3e !important;
+}
+
+nde-record-citations-indicators .citation-indicator:hover .mat-body-medium {
+  text-decoration: underline;
 }

@@ -47,7 +47,12 @@ export class ReportProblemComponent implements OnInit, OnDestroy {
   get reportUrl(): string {
     const params = new URLSearchParams({
       queue_id: LIBANSWERS_QUEUE_ID,
-      pdetails: window.location.href,
+      // LibAnswers' pre-fill query-string key for this form's "URL if
+      // applicable" field is 'pquestion', despite that field's own DOM
+      // name="pdetails" - confirmed against the live form (?pdetails=...
+      // is silently ignored; ?pquestion=... is what actually lands in the
+      // pdetails textarea). Matches Purdue's old PrimoVE custom.js.
+      pquestion: window.location.href,
     });
     return `${LIBANSWERS_FORM_URL}?${params.toString()}`;
   }
