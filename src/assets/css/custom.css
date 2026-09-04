@@ -66,6 +66,35 @@ ul.main-menu-list li a.mat-mdc-button .mdc-button__label {
   fill: #fff;
 }
 
+/* Header icons that NDE colors dark gray - invisible against the black
+   header. The My Account icon ships as .grey-icon-color-no-stroke
+   (#747878) and the "opens in a new window" icons next to the Feedback
+   Survey / Back to Current Library Search links render at #5e5e5e.
+   Both forced white here (21:1 on black; non-text needs only 3:1).
+   Scoped under .top-bar so the same icons/classes keep their gray when
+   NDE reuses them elsewhere - notably inside the "More" overflow
+   dropdown and the user menu, which render in a CDK overlay on a white
+   background OUTSIDE .top-bar, where gray is correct and white would
+   be invisible. */
+.top-bar nde-user-area mat-icon svg path,
+.top-bar .main-menu-list mat-icon svg path {
+  fill: #ffffff !important;
+}
+
+/* At narrower window widths the header menu overflows the viewport and
+   the page scrolls horizontally - but .top-bar's width stays locked to
+   the viewport, so its black background ends mid-header and the
+   overflowing menu links (white, per the rules above) sit unreadable on
+   the white page behind it. NDE's default header didn't care (dark text
+   on white), so this is a side effect of our black header, fixed on our
+   side: let the header box grow to fit its content so the black paints
+   the full scrollable width. Verified live at 800/1000/1150px widths -
+   at full width max-content is narrower than the viewport, so this has
+   no effect there. */
+.top-bar {
+  min-width: max-content;
+}
+
 /* Search bar background overlay for better contrast with white header */
 .custom-search-bar-container .background-overlay {
   background-color: #000 !important;   /* pure black */
@@ -729,4 +758,86 @@ nde-record-citations-indicators .citation-indicator .mat-body-medium {
 
 nde-record-citations-indicators .citation-indicator:hover .mat-body-medium {
   text-decoration: underline;
+}
+
+/* ============================================================
+   SIGN-IN SNACKBAR (brief results page)
+   NDE's "Sign in to get complete results and to request items"
+   toast renders as a plain white card with small gray text and a
+   borderless gray "Sign in" text button - it doesn't read as the
+   place to sign in. Rebranded: black card (echoing the black site
+   header) with a Boilermaker Gold rim, white message text, and the
+   Sign in action as a solid #CFB991 gold pill with black text so
+   it reads unambiguously as the primary action.
+
+   Scoping: everything is anchored on <nde-custom-snack-bar> (and
+   the container via :has) rather than on the generic Material
+   snackbar classes, because mat-snack-bar-container/.mdc-snackbar
+   markup is shared by every other NDE toast (pin/save
+   confirmations etc.) - those keep their default styling.
+   <nde-login> is likewise reused elsewhere (header user menu), so
+   its button is only styled through this ancestor chain. All class
+   hooks here (notification-text, dismiss-btn, login-btn,
+   basic-button) are real class names, no _ngcontent hashes.
+
+   Contrast (computed per contrast-check-workflow, verified live on
+   UXTEST 2026-09-02):
+   - white message text on #000: 21:1 (needs 4.5:1)
+   - black label on #CFB991 pill: 11.03:1 (needs 4.5:1)
+   - black label on #EBD99F hover: 14.96:1 (needs 4.5:1)
+   - white dismiss icon on #000: 21:1 (non-text, needs 3:1)
+   - #CFB991 focus outline / pill boundary on #000: 11.03:1
+     (WCAG 1.4.11 non-text contrast, needs 3:1)
+   Hover also gets a non-color cue: NDE's own underline-on-hover on
+   the button label still applies, so the lighter-gold hover isn't
+   color-only.
+
+   The Login icon inside the button carries "icon-color", NOT
+   "icon-primary-fill", so the existing header rule that forces
+   .icon-primary-fill icons white doesn't conflict here (unlike the
+   availability-row buttons above, which needed a specificity
+   workaround for it).
+   ============================================================ */
+
+mat-snack-bar-container:has(nde-custom-snack-bar) .mdc-snackbar__surface {
+  background-color: #000000 !important;
+  border: 2px solid #CFB991 !important;
+  border-radius: 8px !important;
+}
+
+nde-custom-snack-bar .notification-text {
+  color: #ffffff !important;
+}
+
+nde-custom-snack-bar .dismiss-btn svg path {
+  fill: #ffffff !important;
+}
+
+nde-custom-snack-bar .dismiss-btn:hover {
+  background-color: rgba(255, 255, 255, 0.15) !important;
+}
+
+nde-custom-snack-bar .dismiss-btn:focus-visible,
+nde-custom-snack-bar nde-login button.basic-button:focus-visible {
+  outline: 2px solid #CFB991 !important;
+  outline-offset: 2px !important;
+}
+
+nde-custom-snack-bar nde-login button.basic-button {
+  background-color: #CFB991 !important;
+  border-radius: 999px !important;
+  padding: 0 20px !important;
+}
+
+nde-custom-snack-bar nde-login button.basic-button:hover {
+  background-color: #EBD99F !important;
+}
+
+nde-custom-snack-bar nde-login button.basic-button .mdc-button__label {
+  color: #000000 !important;
+  font-weight: 600 !important;
+}
+
+nde-custom-snack-bar nde-login button.basic-button svg path {
+  fill: #000000 !important;
 }

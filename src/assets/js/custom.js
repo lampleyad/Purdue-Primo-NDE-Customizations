@@ -420,7 +420,131 @@
     }
   })();
 
+  // --------------------------------------------------------------------------
+  // 10. Reorder Pickup Location dropdown - "Personal Delivery" group second
+  //     NDE pins the PERSONAL DELIVERY group to the top of the request form's
+  //     Pickup Location dropdown; PrimoVE lists the PURDUE CAMPUS LIBRARIES
+  //     group first with Personal Delivery after it. Moves the PERSONAL
+  //     DELIVERY <mat-optgroup> to sit directly after the PURDUE CAMPUS
+  //     group. Like #7 (which hides options inside this same group), the
+  //     autocomplete panel is portal-rendered into a CDK overlay each time
+  //     it opens - and re-rendered as the user types to filter - so this
+  //     re-applies via the shared observer pattern rather than running once.
+  //
+  //     Known caveat: Angular Material tracks option order internally, so
+  //     arrow-key traversal still follows NDE's original order (personal
+  //     delivery options highlight first) even though the group now sits
+  //     second visually. Every option remains reachable by keyboard and is
+  //     announced correctly to screen readers; only the traversal sequence
+  //     differs from the visual order.
+  // --------------------------------------------------------------------------
+  (function initReorderPickupLocationGroups() {
+    var MARKER = 'data-purdue-delivery-group-moved';
+
+    function reorder() {
+      var groups = document.querySelectorAll('mat-optgroup');
+      var personal = null;
+      var campus = null;
+      groups.forEach(function (group) {
+        var labelEl = group.querySelector('.mat-mdc-optgroup-label');
+        var label = labelEl ? labelEl.textContent.trim().toUpperCase() : '';
+        if (label === 'PERSONAL DELIVERY') personal = group;
+        if (label.indexOf('PURDUE CAMPUS') === 0) campus = group;
+      });
+      if (!personal || !campus || personal.hasAttribute(MARKER)) return;
+      if (personal.parentNode !== campus.parentNode) return;
+      // Only act when NDE rendered personal delivery ABOVE the campus group;
+      // if a filtered list or future NDE version already orders them the
+      // desired way, leave the DOM alone.
+      if (personal.compareDocumentPosition(campus) & Node.DOCUMENT_POSITION_FOLLOWING) {
+        personal.setAttribute(MARKER, 'true');
+        campus.parentNode.insertBefore(personal, campus.nextElementSibling);
+      }
+    }
+
+    var scheduled = false;
+    var observer = new MutationObserver(function () {
+      if (scheduled) return;
+      scheduled = true;
+      window.requestAnimationFrame(function () {
+        scheduled = false;
+        reorder();
+      });
+    });
+
+    function start() {
+      reorder();
+      observer.observe(document.body, { childList: true, subtree: true });
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', start);
+    } else {
+      start();
+    }
+  })();
+
+  // --------------------------------------------------------------------------
+  // 11. Auto-add the second address line (Office Number) in the request form
+  //     PrimoVE shows both Campus Delivery address fields up front: Building
+  //     (4 letter code) AND Office Number. NDE renders only the Building
+  //     field and hides the second line behind a "+ Add address line" button
+  //     that stays DISABLED until something is typed into Building - so a
+  //     user can't even see where the office number goes until they've
+  //     partially filled the form. This clicks that button programmatically
+  //     as soon as it renders, so both lines are present from the start,
+  //     restoring VE's layout.
+  //
+  //     The button is disabled via Angular's [disabled] binding while
+  //     Building is empty; a native click on a disabled button is inert, so
+  //     the disabled state is lifted first, then click() fires the Angular
+  //     handler that adds the line. If a future NDE version's handler
+  //     internally refuses while the form is empty, this simply does
+  //     nothing (marker prevents retry loops) and the button keeps working
+  //     normally for the user. If the user resets the form, formly
+  //     re-renders the fields fresh (without the marker), so the second
+  //     line is re-added automatically.
+  // --------------------------------------------------------------------------
+  (function initAutoAddOfficeNumberLine() {
+    var MARKER = 'data-purdue-address-line-added';
+
+    function autoAdd() {
+      var wrappers = document.querySelectorAll(
+        'nde-formly-add-address-line-button:not([' + MARKER + '])'
+      );
+      wrappers.forEach(function (wrapper) {
+        var btn = wrapper.querySelector('button');
+        if (!btn) return;
+        wrapper.setAttribute(MARKER, 'true');
+        btn.removeAttribute('disabled');
+        btn.classList.remove('mat-mdc-button-disabled');
+        btn.click();
+      });
+    }
+
+    var scheduled = false;
+    var observer = new MutationObserver(function () {
+      if (scheduled) return;
+      scheduled = true;
+      window.requestAnimationFrame(function () {
+        scheduled = false;
+        autoAdd();
+      });
+    });
+
+    function start() {
+      autoAdd();
+      observer.observe(document.body, { childList: true, subtree: true });
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', start);
+    } else {
+      start();
+    }
+  })();
+
   // Optional: tiny console marker to confirm custom.js loaded
-  console.log('NDE custom.js loaded (GA4 + LibAnswers + GTM + auto-expand + view-it reorder + location-available move + hide delivery options + getit-other auto-expand + strong-tag fix).');
+  console.log('NDE custom.js loaded (GA4 + LibAnswers + GTM + auto-expand + view-it reorder + location-available move + hide delivery options + getit-other auto-expand + strong-tag fix + pickup-group reorder + auto address line).');
 
 })();
